@@ -1,0 +1,35 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # Если ваша основная ветка называется master, замените main на master
+
+# Разрешаем этому workflow права на запись в репозиторий (для создания ветки gh-pages)
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout репозитория
+        uses: actions/checkout@v4
+
+      - name: Установка Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Используем актуальную LTS версию
+          cache: 'npm'
+
+      - name: Установка зависимостей
+        run: npm install
+
+      - name: Сборка проекта
+        run: npm run build
+
+      - name: Деплой на GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist # Vite собирает проект в папку dist
